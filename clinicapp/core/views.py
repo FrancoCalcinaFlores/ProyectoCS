@@ -1,7 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
+def inicio(request):
+    return render(request, 'inicio.html')
 
+@login_required
 def home(request):
-    """Pantalla principal con accesos para pacientes y administradores."""
-
-    return render(request, 'core/home.html')
+    if request.user.groups.filter(name='ADMIN').exists():
+        return redirect('dashboard')
+    elif request.user.groups.filter(name='PACIENTE').exists():
+        return redirect('dashboard')
+    return redirect('login')
