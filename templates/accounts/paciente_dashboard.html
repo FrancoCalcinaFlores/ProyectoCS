@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de paciente{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Hola {{ paciente.nombre_mostrado }}</h2>
+    <p>Estas son tus próximas citas:</p>
+    {% if citas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha y hora</th>
+                    <th>Estado</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cita in citas %}
+                <tr>
+                    <td>{{ cita.fecha_hora_inicio|date:"d/m/Y H:i" }} - {{ cita.fecha_hora_fin|date:"H:i" }}</td>
+                    <td>{{ cita.get_estado_display }}</td>
+                    <td>{{ cita.motivo|default:"(sin motivo)" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No tienes citas registradas aún.</p>
+    {% endif %}
+</div>
+
+<div class="flex">
+    <div class="card">
+        <h3>Inscribirme a una cita</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="crear_cita">
+            {% for field in cita_form %}
+                <div class="field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="messages">
+                            {% for error in field.errors %}
+                                <li class="error">{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn">Guardar cita</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Enviar sugerencia al administrador</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="enviar_sugerencia">
+            {% for field in sugerencia_form %}
+                <div class="field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="messages">
+                            {% for error in field.errors %}
+                                <li class="error">{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-secondary">Enviar sugerencia</button>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Historial de sugerencias</h3>
+    {% if sugerencias %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Cita</th>
+                    <th>Mensaje</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for sugerencia in sugerencias %}
+                <tr>
+                    <td>{{ sugerencia.creado_en|date:"d/m/Y H:i" }}</td>
+                    <td>
+                        {% if sugerencia.cita %}
+                            {{ sugerencia.cita.fecha_hora_inicio|date:"d/m/Y H:i" }}
+                        {% else %}
+                            --
+                        {% endif %}
+                    </td>
+                    <td>{{ sugerencia.mensaje }}</td>
+                    <td>
+                        {% if sugerencia.resuelta %}
+                            Resuelta
+                        {% else %}
+                            Pendiente
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Todavía no enviaste sugerencias.</p>
+    {% endif %}
+</div>
+{% endblock %}
