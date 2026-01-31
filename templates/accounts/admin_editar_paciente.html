@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Editar paciente{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 640px; margin: 0 auto;">
+    <h2>Editar paciente: {{ paciente.nombre_mostrado }}</h2>
+    <form method="post">
+        {% csrf_token %}
+        <h3>Datos de la cuenta</h3>
+        {% for field in usuario_form %}
+            <div class="field">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="messages">
+                        {% for error in field.errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <h3>Datos del paciente</h3>
+        {% for field in paciente_form %}
+            <div class="field">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.errors %}
+                    <div class="messages">
+                        {% for error in field.errors %}
+                            <li class="error">{{ error }}</li>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <div style="display: flex; justify-content: space-between; gap: 1rem;">
+            <a href="{% url 'accounts:dashboard_admin' %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Cancelar</a>
+            <button type="submit" class="btn" style="flex: 1;">Guardar cambios</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

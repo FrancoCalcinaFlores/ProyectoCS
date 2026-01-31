@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Clínica{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #1c6dd0;
+            color: white;
+            padding: 1rem 2rem;
+        }
+        nav a {
+            color: white;
+            margin-right: 1rem;
+            text-decoration: none;
+        }
+        .container {
+            padding: 2rem;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+        .card {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 0.5rem;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f0f0f0;
+        }
+        .btn {
+            background-color: #1c6dd0;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background-color: #555;
+        }
+        .btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+        }
+        .messages {
+            margin-bottom: 1rem;
+        }
+        .messages li {
+            list-style: none;
+            margin: 0.3rem 0;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+        .messages li.success {
+            background-color: #d1f5d3;
+            color: #1a7f37;
+        }
+        .messages li.error {
+            background-color: #ffd7d7;
+            color: #a11c1c;
+        }
+        form .field {
+            margin-bottom: 0.8rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .flex {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .flex > * {
+            flex: 1;
+        }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+<header>
+    <nav>
+        <strong>Clínica Demo</strong>
+        <span style="margin-left: 2rem;"></span>
+        <a href="{% url 'core:home' %}">Inicio</a>
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <a href="{% url 'accounts:dashboard_admin' %}">Panel administrador</a>
+            {% else %}
+                <a href="{% url 'accounts:dashboard_paciente' %}">Panel paciente</a>
+            {% endif %}
+            <a href="{% url 'accounts:logout' %}">Cerrar sesión</a>
+        {% else %}
+            <a href="{% url 'accounts:login_paciente' %}">Login paciente</a>
+            <a href="{% url 'accounts:login_admin' %}">Login administrador</a>
+        {% endif %}
+    </nav>
+</header>
+<div class="container">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% block content %}{% endblock %}
+</div>
+</body>
+</html>

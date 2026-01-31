@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}Panel de administrador{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Calendario general de citas</h2>
+    {% if citas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Paciente</th>
+                    <th>Inicio</th>
+                    <th>Fin</th>
+                    <th>Estado</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for cita in citas %}
+                <tr>
+                    <td>{{ cita.paciente.nombre_mostrado }}</td>
+                    <td>{{ cita.fecha_hora_inicio|date:"d/m/Y H:i" }}</td>
+                    <td>{{ cita.fecha_hora_fin|date:"d/m/Y H:i" }}</td>
+                    <td>{{ cita.get_estado_display }}</td>
+                    <td>{{ cita.motivo|default:"(sin motivo)" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay citas registradas.</p>
+    {% endif %}
+</div>
+
+<div class="card">
+    <h3>Pacientes registrados</h3>
+    {% if pacientes %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>DNI</th>
+                    <th>Teléfono</th>
+                    <th>Email</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for paciente in pacientes %}
+                <tr>
+                    <td>{{ paciente.nombre_mostrado }}</td>
+                    <td>{{ paciente.dni }}</td>
+                    <td>{{ paciente.telefono|default:"-" }}</td>
+                    <td>{{ paciente.email_contacto|default:"-" }}</td>
+                    <td><a class="btn btn-secondary" href="{% url 'accounts:editar_paciente' paciente.pk %}">Editar</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No se registraron pacientes todavía.</p>
+    {% endif %}
+</div>
+
+<div class="flex">
+    <div class="card">
+        <h3>Crear paciente</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="crear_paciente">
+            {% for field in crear_form %}
+                <div class="field">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% if field.errors %}
+                        <div class="messages">
+                            {% for error in field.errors %}
+                                <li class="error">{{ error }}</li>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <button type="submit" class="btn">Guardar</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Sugerencias de pacientes</h3>
+        {% if sugerencias %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Paciente</th>
+                        <th>Fecha</th>
+                        <th>Mensaje</th>
+                        <th>Cita</th>
+                        <th>Estado</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for sugerencia in sugerencias %}
+                    <tr>
+                        <td>{{ sugerencia.paciente.nombre_mostrado }}</td>
+                        <td>{{ sugerencia.creado_en|date:"d/m/Y H:i" }}</td>
+                        <td>{{ sugerencia.mensaje }}</td>
+                        <td>
+                            {% if sugerencia.cita %}
+                                {{ sugerencia.cita.fecha_hora_inicio|date:"d/m/Y H:i" }}
+                            {% else %}
+                                --
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if sugerencia.resuelta %}
+                                Resuelta
+                            {% else %}
+                                Pendiente
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not sugerencia.resuelta %}
+                                <form method="post" style="display: inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="action" value="resolver_sugerencia">
+                                    <input type="hidden" name="sugerencia_id" value="{{ sugerencia.pk }}">
+                                    <button type="submit" class="btn btn-secondary">Marcar como resuelta</button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay sugerencias pendientes.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

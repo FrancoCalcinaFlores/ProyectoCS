@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="card" style="text-align: center;">
+    <h1>Bienvenido a la Clínica</h1>
+    <p>Selecciona el tipo de acceso que necesitas:</p>
+    <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem;">
+        <a class="btn" style="padding: 1rem 2rem;" href="{% url 'accounts:login_paciente' %}">Ingreso paciente</a>
+        <a class="btn btn-secondary" style="padding: 1rem 2rem;" href="{% url 'accounts:login_admin' %}">Ingreso administrador</a>
+    </div>
+</div>
+{% endblock %}

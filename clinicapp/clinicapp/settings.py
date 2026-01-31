@@ -103,13 +103,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-pe'
 
-
+TIME_ZONE = 'America/Lima'
 
 USE_I18N = True
-
-
+USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -123,9 +122,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 TEMPLATES[0]['DIRS'] = [BASE_DIR / 'templates']
 
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = 'dashboard'
-LOGOUT_REDIRECT_URL = 'login'
-
-TIME_ZONE = 'America/Lima'
-USE_TZ = True
+LOGIN_URL = 'accounts:login_paciente'
+LOGIN_REDIRECT_URL = 'core:home'
+LOGOUT_REDIRECT_URL = 'core:home'
